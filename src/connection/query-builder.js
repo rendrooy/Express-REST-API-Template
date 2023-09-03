@@ -10,16 +10,7 @@ const dataTypes = {
 };
 
 const tableNames = {
-  members: 'members'
-  
-  // user: `"USER"`,
-  // member: `"STUDENT"`,
-  // attendance: `"ATTENDANCE"`,
-  // classroom: `"CLASSROOM"`,
-  // subject: `"SUBJECT"`,
-  // lecture: `"LECTURE"`,
-  // subjectClassroom: `"SUBJECT_CLASSROOM"`,
-  // admin: `"ADMIN"`,
+  members: 'members',
 };
 
 const queryOption = {
@@ -44,8 +35,8 @@ const buildInsertQuery = (columnDefinition, data) => {
   const inputColumns = [];
   const bindColumns = [];
   const bindValues = [];
-  Object.keys(data).forEach(key => {
-    inputColumns.push(`"${key}"`)
+  Object.keys(data).forEach((key) => {
+    inputColumns.push(`"${key}"`);
     console.log(key);
     bindValues.push(data[key]);
 
@@ -69,7 +60,7 @@ const buildUpdateQuery = (columnDefinition, data, condition) => {
   const bindColumns = [];
   const bindValues = [];
   // console.log(data);
-  Object.keys(data).forEach(key => {
+  Object.keys(data).forEach((key) => {
     bindValues.push(data[key]);
 
     // if (columnDefinition[key] === dataTypes.timestamp) {
@@ -77,12 +68,12 @@ const buildUpdateQuery = (columnDefinition, data, condition) => {
     // } else if (columnDefinition[key] === dataTypes.date) {
     //   bindColumns.push(`${key}=to_date(${key}, '${timeConfig.oracleDate}')`);
     // } else {
-      bindColumns.push(`${key}=${key}`);
+    bindColumns.push(`${key}=${key}`);
     // }
   });
 
   const conditionColumns = [];
-  Object.keys(condition).forEach(key => {
+  Object.keys(condition).forEach((key) => {
     conditionColumns.push(`${key}=${key}`);
     bindValues.push(condition[key]);
   });
@@ -98,12 +89,20 @@ const buildUpdateQuery = (columnDefinition, data, condition) => {
  * Conditinal Query
  */
 
-const buildConditionOperator = (columnName, bindColumn, value, operator = operatorTypes.equal, index) => {
+const buildConditionOperator = (
+  columnName,
+  bindColumn,
+  value,
+  operator = operatorTypes.equal,
+  index
+) => {
   let conditionalOperator = '';
 
   switch (operator) {
     case operatorTypes.like:
-      conditionalOperator = `LOWER(${columnName}) LIKE '%${(value || '').toLowerCase()}%'`;
+      conditionalOperator = `LOWER(${columnName}) LIKE '%${(
+        value || ''
+      ).toLowerCase()}%'`;
       break;
     case operatorTypes.not_equal:
       conditionalOperator = `${columnName}!=$${index}`;
@@ -151,9 +150,21 @@ const buildConditionQuery = (conditions = []) => {
       columnName = element.column;
     }
     // bindConditions.push(`${columnName}=${element.column}`);
-    bindConditions.push(buildConditionOperator(columnName, element.column, element.value, element.operator, i +1));
+    bindConditions.push(
+      buildConditionOperator(
+        columnName,
+        element.column,
+        element.value,
+        element.operator,
+        i + 1
+      )
+    );
 
-    const unbindOperators = [operatorTypes.like, operatorTypes.is_not_null, operatorTypes.in];
+    const unbindOperators = [
+      operatorTypes.like,
+      operatorTypes.is_not_null,
+      operatorTypes.in,
+    ];
     if (!unbindOperators.includes(element.operator)) {
       bindValues.push(element.value);
     }
