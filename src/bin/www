@@ -22,6 +22,7 @@ function normalizePort(val) {
 
 // Get port from environment and store in Express.
 const port = normalizePort(process.env.PORT || '3000');
+
 app.set('port', port);
 
 // Create the HTTP server
@@ -39,11 +40,9 @@ function onError(error) {
     case 'EACCES':
       console.error(`${bind} requires elevated privileges`); // eslint-disable-line no-console
       process.exit(1);
-      break;
     case 'EADDRINUSE':
       console.error(`${bind} is already in use`); // eslint-disable-line no-console
       process.exit(1);
-      break;
     default:
       throw error;
   }

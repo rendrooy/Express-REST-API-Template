@@ -4,61 +4,84 @@ const Family = require('./familyModel');
 
 const sequelize = sequelizeConnection;
 
-const Member = sequelize.define('members', {
-  id: {
-    type: DataTypes.UUID,
-    primaryKey: true,
-  },
-  name: {
-    type: DataTypes.STRING,
-  },
-  nik: {
-    type: DataTypes.STRING(20),
-    unique: true,
-  },
-  address: {
-    type: DataTypes.TEXT,
-  },
-  birthdate: {
-    type: DataTypes.DATE,
-  },
-  birthplace: {
-    type: DataTypes.STRING(100),
-  },
-  sex: {
-    type: DataTypes.CHAR(1),
-  },
-  profession: {
-    type: DataTypes.STRING(100),
-  },
-  religion: {
-    type: DataTypes.STRING(50),
-  },
-  phone: {
-    type: DataTypes.STRING(15),
-  },
-  bloodtype: {
-    type: DataTypes.STRING(5),
-  },
-  familyid: {
-    type: DataTypes.UUID,
-    references: {
-      model: Family,
-      key: 'id',
+const Member = sequelize.define(
+  'members',
+  {
+    id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: Sequelize.UUIDV4,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    nik: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true,
+    },
+    address: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    birthdate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    birthplace: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    sex: {
+      type: DataTypes.CHAR(1),
+      allowNull: true,
+    },
+    profession: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    religion: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    bloodtype: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    familyrelation: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    createdat: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    updatedat: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    familyid: {
+      type: DataTypes.UUID,
+      allowNull: true,
     },
   },
-  familyrelation: {
-    type: DataTypes.STRING(100),
-  },
-  createdat: {
-    type: DataTypes.DATE,
-  },
-  updatedat: {
-    type: DataTypes.DATE,
-  },
-});
+  {
+    tableName: 'members',
+    timestamps: false,
+  }
+);
 
-// Member.belongsTo(Family, { foreignKey: 'familyid', targetKey: 'id' });
+Member.associate = (models) => {
+  Member.belongsTo(Family, {
+    foreignKey: 'familyid',
+    as: 'family',
+  });
+};
 
 sequelize
   .sync()

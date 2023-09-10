@@ -1,10 +1,14 @@
 'use strict';
 const uuidv4 = require('uuid');
 const moment = require('moment');
-const { sequelizeConnection } = require('../../connection/db');
-
 const locales = require('../../config/locales');
-const Family = require('../../model/familyModel');
+const { sequelizeConnection } = require('../../connection/db');
+const formidable = require('formidable');
+const fs = require('fs');
+const multer = require('multer');
+const { resFileName } = require('../../connection/multer-config');
+
+const { News, FileType, ValidFileTypes } = require('../../model/newsModel');
 const Member = require('../../model/memberModel');
 const { whereBuilder } = require('../../connection/db');
 const { timeConfig } = require('../../config');
@@ -13,10 +17,10 @@ const {
   queryOption,
 } = require('../../connection/query-builder');
 
-const getFamily = async (params) => {
+const getNews = async (params) => {
   try {
-    const families = await Family.findByPk(params);
-    return families;
+    const news = await News.findByPk(params);
+    return news;
   } catch (error) {
     console.error(
       'Error: Unable to execute promotionService.getAll => ',
@@ -31,7 +35,7 @@ const getFamily = async (params) => {
   }
 };
 
-const findFamily = async (params) => {
+const findNews = async (params) => {
   try {
     const limit = parseInt(params.limit || queryOption.limit);
     const page = parseInt(params.page || queryOption.page);
@@ -42,26 +46,16 @@ const findFamily = async (params) => {
       order_dir: params.order_dir || 'DESC',
     };
 
-    const families = await Family.findAll({
-      order: [[order.order_by, order.order_dir]],
+    const news = await News.findAll({
       offset,
-      // include: {
-      //   model: Member,
-      // },
-      // include: [
-      //   {
-      //     model: Member,
-      //     as: 'members',
-      //     attributes: ['id', 'name', 'nik'],
-      //   },
-      // ],
+
       limit: limit,
     });
 
-    const filteredCount = families.length;
-    const totalCount = await Family.count();
+    const filteredCount = news.length;
+    const totalCount = await News.count();
     console.log(totalCount);
-    return { totalCount: totalCount, count: filteredCount, data: families };
+    return { totalCount: totalCount, count: filteredCount, data: news };
   } catch (error) {
     console.error(
       'Error: Unable to execute promotionService.getAll => ',
@@ -76,28 +70,49 @@ const findFamily = async (params) => {
   }
 };
 
-const insertFamily = async (params) => {
+const uploadFile = async (req) => {
+  // const now = moment().format(timeConfig.moment);
+
+  try {
+    const news = await News.findByPk(req.headers['news-id']);
+
+    if (news.id) {
+      return resFileName;
+    } else {
+      return {
+        status: 500,
+        error: {
+          message: locales.resource_not_found,
+        },
+      };
+    }
+  } catch (error) {
+    console.error(
+      'Error: Unable to execute promotionService.uploadFile => ',
+      error
+    );
+    return {
+      status: 500,
+      error: {
+        message: locales.unable_to_handle_request,
+      },
+    };
+  }
+};
+
+const insertNews = async (params) => {
   try {
     const now = moment().format(timeConfig.moment);
 
     let dataRaw = {
       id: uuidv4.v4(),
-      nokk: params.nokk,
-      nopbb: params.nopbb,
-      statusadm: params.statusadm,
-      statusdom: params.statusdom,
-      address: params.address,
-      postalcode: params.postalcode,
-      RT: params.rt,
-      familyheadid: params.familyheadid || null,
+      title: params.title,
+      content: params.content,
       createdat: now,
       updatedat: now,
     };
-
-    const newFamily = await Family.create({
-      ...dataRaw,
-    });
-    return newFamily;
+    await News.create(dataRaw);
+    return dataRaw;
   } catch (error) {
     console.error(
       'Error: Unable to execute promotionService.getAll => ',
@@ -112,20 +127,20 @@ const insertFamily = async (params) => {
   }
 };
 
-const updateFamily = async (query, params) => {
+const updateNews = async (query, params) => {
   try {
-    const familyIdToUpdate = params.id;
+    const newsIdToUpdate = params.id;
 
-    const [rowCount, [updatedFamily]] = await Family.update(params, {
+    const [rowCount, [updatedNews]] = await News.update(params, {
       where: {
-        id: familyIdToUpdate,
+        id: newsIdToUpdate,
       },
       returning: true,
     });
 
     if (rowCount > 0) {
-      console.log('Data yang telah di-update:', updatedFamily.toJSON());
-      return updatedFamily;
+      console.log('Data yang telah di-update:', updatedNews.toJSON());
+      return updatedNews;
     } else {
       console.log('Data tidak ditemukan atau tidak ada perubahan.');
       return {
@@ -145,17 +160,14 @@ const updateFamily = async (query, params) => {
   }
 };
 
-const deleteFamily = async (params) => {
+const deleteNews = async (params) => {
   console.log(params.id);
   try {
-    const familyIdToDelete = params.id;
-    await Member.update(
-      { familyid: null },
-      { where: { familyid: familyIdToDelete } }
-    );
-    const rowCount = await Family.destroy({
+    const newsIdToDelete = params.id;
+
+    const rowCount = await News.destroy({
       where: {
-        id: familyIdToDelete,
+        id: newsIdToDelete,
       },
     });
 
@@ -183,9 +195,10 @@ const deleteFamily = async (params) => {
 };
 
 module.exports = {
-  getFamily,
-  findFamily,
-  insertFamily,
-  updateFamily,
-  deleteFamily,
+  getNews,
+  findNews,
+  insertNews,
+  updateNews,
+  uploadFile,
+  deleteNews,
 };

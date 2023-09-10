@@ -17,6 +17,7 @@ const sequelizeConnection = new Sequelize(
   dbConection.user,
   dbConection.password,
   {
+    schema: 'delabel',
     host: dbConection.host,
     dialect: 'postgres',
     port: 5432, // Port default PostgreSQL
