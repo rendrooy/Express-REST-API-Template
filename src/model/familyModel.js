@@ -63,12 +63,12 @@ const Family = sequelize.define(
   }
 );
 
-Family.associate = (models) => {
-  Family.hasMany(Member, {
-    foreignKey: 'id',
-    as: 'familyhead',
-  });
-};
+// Family.associate = (models) => {
+//   Family.hasMany(Member, {
+//     foreignKey: 'id',
+//     as: 'familyhead',
+//   });
+// };
 
 // Sinkronkan model dengan database jika diperlukan
 // Family.sync({ force: true }); // Hati-hati dengan menggunakan { force: true }, ini akan menghapus tabel yang ada

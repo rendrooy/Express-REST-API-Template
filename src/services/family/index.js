@@ -1,12 +1,12 @@
 'use strict';
 const uuidv4 = require('uuid');
 const moment = require('moment');
-const { sequelizeConnection } = require('../../connection/db');
+const { Sequelize } = require('sequelize');
 
 const locales = require('../../config/locales');
 const Family = require('../../model/familyModel');
 const Member = require('../../model/memberModel');
-const { whereBuilder } = require('../../connection/db');
+const { whereBuilder, sequelizeConnection } = require('../../connection/db');
 const { timeConfig } = require('../../config');
 const {
   operatorTypes,
@@ -16,6 +16,7 @@ const {
 const getFamily = async (params) => {
   try {
     const families = await Family.findByPk(params);
+
     return families;
   } catch (error) {
     console.error(
@@ -42,22 +43,29 @@ const findFamily = async (params) => {
       order_dir: params.order_dir || 'DESC',
     };
 
-    const families = await Family.findAll({
-      order: [[order.order_by, order.order_dir]],
-      offset,
-      // include: {
-      //   model: Member,
-      // },
-      // include: [
-      //   {
-      //     model: Member,
-      //     as: 'members',
-      //     attributes: ['id', 'name', 'nik'],
-      //   },
-      // ],
-      limit: limit,
-    });
-
+    const families = await sequelizeConnection.query(
+      `select
+      f.id,
+      f.nokk,
+      f.postalcode,
+      f.rt,
+      f.nopbb,
+      f.statusadm,
+      f.statusdom,
+      f.createdat,
+      f.updatedat,
+      m.id as kepalakeluargaid,
+      m.name as kepalakeluarganame
+    from
+      delabel.families f
+    inner join delabel.members m on
+      m.familyid = f.id and m.familyrelation = 'Kepala Keluarga'
+        ORDER by f.createdat  DESC LIMIT ${limit} OFFSET ${offset}  
+        `,
+      {
+        raw: true,
+      }
+    );
     const filteredCount = families.length;
     const totalCount = await Family.count();
     console.log(totalCount);
@@ -147,17 +155,24 @@ const updateFamily = async (query, params) => {
 
 const deleteFamily = async (params) => {
   console.log(params.id);
+  const t = await sequelizeConnection.transaction();
   try {
     const familyIdToDelete = params.id;
+
     await Member.update(
-      { familyid: null },
-      { where: { familyid: familyIdToDelete } }
+      { familyid: null, familyrelation: null },
+      { where: { familyid: familyIdToDelete } },
+      { transaction: t }
     );
-    const rowCount = await Family.destroy({
-      where: {
-        id: familyIdToDelete,
+    const rowCount = await Family.destroy(
+      {
+        where: {
+          id: familyIdToDelete,
+        },
       },
-    });
+      { transaction: t }
+    );
+    await t.commit();
 
     if (rowCount > 0) {
       console.log('Data telah dihapus.');
@@ -172,6 +187,8 @@ const deleteFamily = async (params) => {
       };
     }
   } catch (error) {
+    await t.rollback();
+
     console.log(error);
     return {
       status: 500,
