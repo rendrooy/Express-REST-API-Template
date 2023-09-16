@@ -9,6 +9,17 @@ let resFileName = '';
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
+    //   if (file.fieldname === 'resume') {
+    //     // if uploading resume
+    //     cb(null, 'resumes');
+    //   } else {
+    //     // else uploading image
+    //     cb(
+    //       null,
+    //       'C:/Users/1473/Desktop/Project/Express-REST-API-Template/src/storages'
+    //     );
+    //   }
+    // },
     cb(
       null,
       'C:/Users/1473/Desktop/Project/Express-REST-API-Template/src/storages'

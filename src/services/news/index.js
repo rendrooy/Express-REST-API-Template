@@ -19,8 +19,25 @@ const {
 
 const getNews = async (params) => {
   try {
-    const news = await News.findByPk(params);
-    return news;
+    const news = await News.findByPk(params.id);
+    const media = await sequelizeConnection.query(
+      `        
+    select
+    *
+    from delabel.newsmedia n 
+    where
+    n.newsid  = '${params.id}'
+`,
+      {
+        raw: true,
+      }
+    );
+    const res = {
+      ...news.dataValues,
+      newsmedia: media[0],
+    };
+    console.log(res);
+    return res;
   } catch (error) {
     console.error(
       'Error: Unable to execute promotionService.getAll => ',
@@ -46,11 +63,21 @@ const findNews = async (params) => {
       order_dir: params.order_dir || 'DESC',
     };
 
-    const news = await News.findAll({
-      offset,
+    const news = await sequelizeConnection.query(`
+    SELECT grouped.id, grouped.title, grouped."content", grouped.newsid, grouped.filename
+    FROM (
+        SELECT n.id, n.title, n."content", m.newsid, MAX(m.filename) AS filename
+        FROM delabel.news n
+        INNER JOIN delabel.newsmedia m ON n.id = m.newsid
+        GROUP BY n.id, n.title, n."content", m.newsid
+        ORDER by n.createdat  DESC LIMIT ${limit} OFFSET ${offset}
+    ) AS grouped
+`);
+    // findAll({
+    //   offset,
 
-      limit: limit,
-    });
+    //   limit: limit,
+    // });
 
     const filteredCount = news.length;
     const totalCount = await News.count();

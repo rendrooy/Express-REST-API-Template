@@ -8,7 +8,7 @@ const multer = require('multer');
 const storage = require('../connection/multer-config');
 
 const getNews = async (req, res) => {
-  appResponse.build(res, await news.getNews(req.query));
+  appResponse.build(res, await news.getNews(req.params));
 };
 const findNews = async (req, res) => {
   appResponse.build(res, await news.findNews(req.query));
