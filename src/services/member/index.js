@@ -66,6 +66,13 @@ const findMember = async (params) => {
         value: params.sex,
       });
     }
+    if (params.familyid) {
+      conditions.push({
+        column: 'familyid',
+        operator: operatorTypes.equal,
+        value: params.familyid,
+      });
+    }
     if (params.bloodtype) {
       conditions.push({
         column: 'bloodtype',

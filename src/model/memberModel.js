@@ -76,12 +76,12 @@ const Member = sequelize.define(
   }
 );
 
-Member.associate = (models) => {
-  Member.belongsTo(Family, {
-    foreignKey: 'familyid',
-    as: 'family',
-  });
-};
+// Member.associate = (models) => {
+//   Member.belongsTo(Family, {
+//     foreignKey: 'familyid',
+//     as: 'family',
+//   });
+// };
 
 sequelize
   .sync()
