@@ -43,5 +43,6 @@ router.delete('/news/:id', news.deleteNews);
 router.post('/news/upload-file', upload.array('file[]'), news.uploadFile);
 
 router.post('/sessions/login', sessions.login);
+router.post('/sessions/register', sessions.register);
 
 module.exports = router;
