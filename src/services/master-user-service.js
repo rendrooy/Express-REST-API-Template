@@ -1,0 +1,253 @@
+'use strict';
+const uuidv4 = require('uuid');
+const moment = require('moment');
+const bcrypt = require('bcrypt');
+const locales = require('../config/locales');
+const masterUserModel = require('../model/master-user-model');
+const masterRoleModel = require('../model/master-role-model');
+const masterMemberModel = require('../model/master-member-model');
+const { whereBuilder } = require('../connection/db');
+const { timeConfig } = require('../config');
+const {
+  operatorTypes,
+  queryOption,
+} = require('../connection/query-builder');
+const { Op } = require('sequelize'); 
+
+
+const getUser = async (params) => {
+  try {
+    const userData = await masterUserModel.findByPk(params.id, {
+      include: [
+        {
+          model: masterRoleModel,
+          as: 'role', // sesuai alias di relasi
+          attributes: ['id', 'name', 'code'],
+        },
+        {
+          model: masterMemberModel,
+          as: 'member',
+          attributes: ['id', 'name', 'address', 'phone'],
+        },
+      ],
+    });
+    return userData;
+  } catch (error) {
+    console.error(
+      'Error: Unable to execute masterUserService.getAll => ',
+      error
+    );
+    return {
+      status: 500,
+      error: {
+        message: locales.unable_to_handle_request,
+      },
+    };
+  }
+};
+
+const findUser = async (params) => {
+    try {
+      const limit = parseInt(params.limit || queryOption.limit);
+      const page = parseInt(params.page || queryOption.page);
+      const offset = (page - 1) * limit;
+      const conditions = [];
+      const order = {
+        order_by: params.order_by || 'created_time',
+        order_dir: params.order_dir || 'DESC',
+      };
+      if (params.username) {
+        conditions.push({
+          column: 'username',
+          operator: operatorTypes.like,
+          value: params.name,
+        });
+      }
+      if (params.email) {
+        conditions.push({
+          column: 'email',
+          operator: operatorTypes.like,
+          value: params.email,
+        });
+      }
+      if (params.role_id) {
+        conditions.push({
+          column: 'role_id',
+          operator: operatorTypes.equal,
+          value: params.role_id,
+        });
+      }
+      const users = await masterUserModel.findAll({
+        where: await whereBuilder(conditions),
+
+        order: [[order.order_by, order.order_dir]],
+        offset,
+        limit: limit,
+      });
+
+      const filteredCount = users.length;
+      const totalCount = await masterUserModel.count();
+      console.log(totalCount);
+      return { totalCount: totalCount, count: filteredCount, data: users };
+    } catch (error) {
+      console.error(
+        'Error: Unable to execute masterUserService.getAll => ',
+        error
+      );
+      return {
+        status: 500,
+        error: {
+          message: locales.unable_to_handle_request,
+        },
+      };
+    }
+};
+
+const insertUser = async (params) => {
+  try {
+    const now = moment().toDate();
+    const saltRounds = 10;
+    //CHECK MEMBER
+    const memberData = await masterMemberModel.findByPk(params.member_id);
+    if (memberData == null) {
+      return {
+        status: 404,
+        error: {
+          message: locales.member_not_registered,
+        },
+      };
+    }
+    // CHECK ROLE
+    let roleData = {};
+    if (params.role_id == null) {
+      roleData = await masterRoleModel.findOne({
+          where: {
+              code: 'WRG',
+          },
+        }
+      )
+    } else {
+        roleData = await masterRoleModel.findByPk(params.role_id)
+    }
+
+    // CHECK USERNAME / EMAIL
+    const userData = await masterUserModel.findOne({
+      where: {
+        [Op.or]: [
+          { email: params.email },
+          { username: params.username },
+        ],
+      },
+    });
+
+    if (userData != null) return {
+      status: 401,
+      error: {
+        message: locales.email_already_registered,
+      },
+    };
+
+    
+    // INSERT DATA
+    const newUser = await masterUserModel.create({
+        ... {
+            id: uuidv4.v4(),
+            email: params.email,
+            password: bcrypt.hashSync(params.password, saltRounds),
+            member_id: memberData.id,
+            role_id: roleData.id,
+            username: params.username,
+            created_time: now,
+            updated_time: now,
+        },
+    });
+    return newUser
+  } catch (error) {
+    console.error(
+      'Error: Unable to execute masterUserService.getAll => ',
+      error
+    );
+    return {
+      status: 500,
+      error: {
+        message: locales.unable_to_handle_request,
+      },
+    };
+  }
+};
+
+const updateUser = async (params) => {
+  try {
+    const userIdToUpdate = params.id;
+
+    const [rowCount, [updatedUser]] = await masterUserModel.update(params, {
+      where: {
+        id: userIdToUpdate,
+      },
+      returning: true,
+    });
+
+    if (rowCount > 0) {
+      console.log('Data yang telah di-update:', updatedUser.toJSON());
+      return updatedUser;
+    } else {
+      console.log('Data tidak ditemukan atau tidak ada perubahan.');
+      return {
+        status: 404,
+        error: {
+          message: locales.unable_to_handle_request,
+        },
+      };
+    }
+  } catch (error) {
+    console.log(error)
+    return {
+      status: 500,
+      error: {
+        message: locales.unable_to_handle_request,
+      },
+    };
+  }
+};
+
+const deleteUser = async (params) => {
+  try {
+    const userIdToDelete = params.id;
+    const paramsDelete = {
+      is_deleted: 1
+    }
+    const [rowCount, [updatedUser]] = await masterUserModel.update(paramsDelete, {
+      where: {
+        id: userIdToDelete,
+      },
+      returning: true,
+    });
+    if (rowCount > 0) {
+      console.log('Data telah dihapus.');
+      return { ...params, rowsAffected: rowCount };
+    } else {
+      console.log('Data tidak ditemukan atau tidak ada yang dihapus.');
+      return {
+        status: 404,
+        error: {
+          message: locales.unable_to_handle_request,
+        },
+      };
+    }
+  } catch (error) {
+    return {
+      status: 500,
+      error: {
+        message: locales.unable_to_handle_request,
+      },
+    };
+  }
+};
+
+module.exports = {
+    getUser,
+    findUser,
+    insertUser,
+    updateUser,
+    deleteUser,
+};
