@@ -102,7 +102,13 @@ const findUser = async (params) => {
       });
 
       const filteredCount = users.length;
-      const totalCount = await masterUserModel.count();
+      const totalCount = await masterUserModel.count(
+        {
+          where: {
+            is_deleted: 0, // ✅ cuma hitung yang belum dihapus
+          },
+        }
+      );
       console.log(totalCount);
       return { totalCount: totalCount, count: filteredCount, data: users };
     } catch (error) {
@@ -201,9 +207,13 @@ const insertUser = async (params) => {
 
 const updateUser = async (params) => {
   try {
+    const now = moment().toDate();
     const userIdToUpdate = params.id;
 
-    const [rowCount, [updatedUser]] = await masterUserModel.update(params, {
+    const [rowCount, [updatedUser]] = await masterUserModel.update({
+      ...params,
+      updated_time: now
+    }, {
       where: {
         id: userIdToUpdate,
       },
@@ -223,7 +233,10 @@ const updateUser = async (params) => {
       };
     }
   } catch (error) {
-    console.log(error)
+    console.error(
+      'Error: Unable to execute masterUserService.update => ',
+      error
+    );
     return {
       status: 500,
       error: {
@@ -236,10 +249,15 @@ const updateUser = async (params) => {
 const deleteUser = async (params) => {
   try {
     const userIdToDelete = params.id;
+    const now = moment().toDate();
     const paramsDelete = {
       is_deleted: 1
     }
-    const [rowCount, [updatedUser]] = await masterUserModel.update(paramsDelete, {
+    const [rowCount, [updatedUser]] = await masterUserModel.update(
+      {
+        ...paramsDelete,
+        updated_time: now
+      }, {
       where: {
         id: userIdToDelete,
       },
@@ -258,6 +276,10 @@ const deleteUser = async (params) => {
       };
     }
   } catch (error) {
+    console.error(
+      'Error: Unable to execute masterUserService.delete => ',
+      error
+    );
     return {
       status: 500,
       error: {
