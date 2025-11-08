@@ -81,7 +81,13 @@ const findMember = async (params) => {
         });
 
         const filteredCount = members.length;
-        const totalCount = await masterMemberModel.count();
+        const totalCount = await masterMemberModel.count(
+            {
+                where: {
+                    is_deleted: 0, // ✅ cuma hitung yang belum dihapus
+                },
+            }
+        );
         console.log(totalCount);
         return { totalCount: totalCount, count: filteredCount, data: members };
     } catch (error) {

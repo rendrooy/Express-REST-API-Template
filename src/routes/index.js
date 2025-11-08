@@ -5,6 +5,7 @@ const router = express.Router();
 const user = require('../controller/master-user-controller');
 const role = require('../controller/master-role-controller');
 const member = require('../controller/master-member-controller');
+const family = require('../controller/master-family-controller');
 
 router.get('/', (req, res) => {
   res.send({ message: 'Hello world' });
@@ -31,5 +32,11 @@ router.post('/find-member', member.findMember);
 router.post('/insert-member', member.insertMember);
 router.post('/update-member', member.updateMember);
 router.post('/delete-member', member.deleteMember);
+
+router.post('/get-family', family.getFamily);
+router.post('/find-family', family.findFamily);
+router.post('/insert-family', family.insertFamily);
+router.post('/update-family', family.updateFamily);
+router.post('/delete-family', family.deleteFamily);
 
 module.exports = router;
