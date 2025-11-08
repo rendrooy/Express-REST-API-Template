@@ -18,6 +18,9 @@ const MasterUser = sequelizeConnection.define('master_user', {
     password: {
         type: DataTypes.STRING,
     },
+    token: {
+        type: DataTypes.STRING,
+    },
     role_id: {
         type: DataTypes.STRING,
         references: {

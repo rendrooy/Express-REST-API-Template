@@ -2,6 +2,10 @@ const express = require('express');
 
 const router = express.Router();
 
+//Auth
+const auth = require('../controller/auth-controller');
+
+// Master Data
 const user = require('../controller/master-user-controller');
 const role = require('../controller/master-role-controller');
 const member = require('../controller/master-member-controller');
@@ -15,6 +19,13 @@ router.get('/', (req, res) => {
   res.send({ message: 'Hello world' });
 });
 
+// Auth
+router.post('/auth/login', auth.login);
+router.post('/auth/register', auth.register);
+
+
+
+// Master Data
 router.post('/get-user', user.getUser);
 router.post('/find-user', user.findUser);
 router.post('/insert-user', user.insertUser);
