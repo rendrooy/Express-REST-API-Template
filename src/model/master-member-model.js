@@ -7,6 +7,9 @@ const MasterMember = sequelizeConnection.define('master_member', {
         primaryKey: true,
         allowNull: false,
     },
+    nik: {
+        type: DataTypes.STRING,
+    },
     name: {
         type: DataTypes.STRING,
     },
