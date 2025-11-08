@@ -17,11 +17,15 @@ const { Op } = require('sequelize');
 
 const getUser = async (params) => {
   try {
-    const userData = await masterUserModel.findByPk(params.id, {
+    const userData = await masterUserModel.findOne({
+      where: {
+        id: params.id,
+        is_deleted: 0,
+      },
       include: [
         {
           model: masterRoleModel,
-          as: 'role', // sesuai alias di relasi
+          as: 'role',
           attributes: ['id', 'name', 'code'],
         },
         {
@@ -31,7 +35,14 @@ const getUser = async (params) => {
         },
       ],
     });
-    return userData;
+    if(userData == null) {
+      return {
+        status: 404,
+        error: {
+          message: locales.resource_not_found,
+        },
+      };
+    } else return userData;
   } catch (error) {
     console.error(
       'Error: Unable to execute masterUserService.getAll => ',
@@ -56,6 +67,11 @@ const findUser = async (params) => {
         order_by: params.order_by || 'created_time',
         order_dir: params.order_dir || 'DESC',
       };
+      conditions.push({
+        column: 'is_deleted',
+        operator: operatorTypes.equal,
+        value: 0,
+      });
       if (params.username) {
         conditions.push({
           column: 'username',
@@ -133,12 +149,18 @@ const insertUser = async (params) => {
     // CHECK USERNAME / EMAIL
     const userData = await masterUserModel.findOne({
       where: {
-        [Op.or]: [
-          { email: params.email },
-          { username: params.username },
+        [Op.and]: [
+          {
+            [Op.or]: [
+              { email: params.email },
+              { username: params.username },
+            ],
+          },
+          { is_deleted: 0 },
         ],
       },
     });
+
 
     if (userData != null) return {
       status: 401,
@@ -159,6 +181,7 @@ const insertUser = async (params) => {
             username: params.username,
             created_time: now,
             updated_time: now,
+            is_deleted: 0
         },
     });
     return newUser
