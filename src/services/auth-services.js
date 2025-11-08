@@ -15,7 +15,6 @@ const loginTokenGenerator = async (currentUser) => {
 
     // generate token
     let token = jwt.sign(userResponse, secretKey, { expiresIn: '90 days' });
-
     const [rowCount, [updatedUser]] = await masterUserModel.update({
         token: token,
         updated_time: now
