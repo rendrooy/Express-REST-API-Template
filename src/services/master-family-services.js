@@ -15,7 +15,7 @@ const { Op } = require('sequelize');
 const MasterMember = require('../model/master-member-model');
 
 
-const getFamily = async (params) => {
+const getFamily = async (currentUser,params) => {
     try {
         const familyData = await masterFamilyModel.findOne({
             where: {
@@ -62,7 +62,7 @@ const getFamily = async (params) => {
     }
 };
 
-const findFamily = async (params) => {
+const findFamily = async (currentUser,params) => {
     try {
         const limit = parseInt(params.limit || queryOption.limit);
         const page = parseInt(params.page || queryOption.page);
@@ -105,8 +105,15 @@ const findFamily = async (params) => {
                 value: params.status_dom,
             });
         }
+        const familyData = await masterFamilyModel.findAll({
+            where: await whereBuilder(conditions),
+            order: [[order.order_by, order.order_dir]],
+            offset,
+            limit: limit,
+        });
 
-        const filteredCount = familys.length;
+
+        const filteredCount = familyData.length;
         const totalCount = await masterFamilyModel.count(
             {
                 where: {
@@ -115,7 +122,7 @@ const findFamily = async (params) => {
             }
         );
         console.log(totalCount);
-        return { totalCount: totalCount, count: filteredCount, data: familys };
+        return { totalCount: totalCount, count: filteredCount, data: familyData };
     } catch (error) {
         console.error(
             'Error: Unable to execute masterFamilyService.getAll => ',
@@ -130,7 +137,7 @@ const findFamily = async (params) => {
     }
 };
 
-const insertFamily = async (params) => {
+const insertFamily = async (currentUser,params) => {
     try {
         const now = moment().toDate();
         // CHECK USERNAME / EMAIL
@@ -178,7 +185,7 @@ const insertFamily = async (params) => {
     }
 };
 
-const updateFamily = async (params) => {
+const updateFamily = async (currentUser,params) => {
     try {
         const now = moment().toDate();
         const familyIdToUpdate = params.id;
@@ -219,7 +226,7 @@ const updateFamily = async (params) => {
     }
 };
 
-const deleteFamily = async (params) => {
+const deleteFamily = async (currentUser,params) => {
     try {
         const now = moment().toDate();
         const familyIdToDelete = params.id;

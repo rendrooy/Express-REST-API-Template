@@ -20,10 +20,10 @@ const MasterMember = sequelizeConnection.define('master_member', {
         type: DataTypes.STRING,
     },
     blood_type: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
     },
     sex: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
     },
     bod: {
         type: DataTypes.DATE, // birth of date
@@ -35,19 +35,31 @@ const MasterMember = sequelizeConnection.define('master_member', {
         type: DataTypes.STRING,
     },
     religion: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
     },
     family_relation: {
         type: DataTypes.STRING,
     },
     family_id: {
         type: DataTypes.STRING,
+        // references: {
+        //     model: 'master_family',
+        //     key: 'id',
+        // },
     },
     created_time: {
         type: DataTypes.DATE,
     },
     updated_time: {
         type: DataTypes.DATE,
+    },
+    created_by_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    updated_by_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
     },
     is_deleted: {
         type: DataTypes.INTEGER,

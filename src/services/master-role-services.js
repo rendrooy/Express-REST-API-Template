@@ -14,7 +14,7 @@ const {
 const { Op } = require('sequelize');
 
 
-const getRole = async (params) => {
+const getRole = async (currentUser, params) => {
     try {
         const roleData = await masterRoleModel.findOne({
             where: {
@@ -44,7 +44,7 @@ const getRole = async (params) => {
     }
 };
 
-const findRole = async (params) => {
+const findRole = async (currentUser, params) => {
     try {
         const limit = parseInt(params.limit || queryOption.limit);
         const page = parseInt(params.page || queryOption.page);
@@ -104,7 +104,7 @@ const findRole = async (params) => {
     }
 };
 
-const insertRole = async (params) => {
+const insertRole = async (currentUser, params) => {
     try {
         const now = moment().toDate();
         // CHECK USERNAME / EMAIL
@@ -152,7 +152,7 @@ const insertRole = async (params) => {
     }
 };
 
-const updateRole = async (params) => {
+const updateRole = async (currentUser, params) => {
     try {
         const now = moment().toDate();
         const roleIdToUpdate = params.id;
@@ -193,7 +193,7 @@ const updateRole = async (params) => {
     }
 };
 
-const deleteRole = async (params) => {
+const deleteRole = async (currentUser, params) => {
     try {
         const now = moment().toDate();
         const roleIdToDelete = params.id;

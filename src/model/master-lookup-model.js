@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelizeConnection } = require('../connection/db');
 
-const MasterRole = sequelizeConnection.define('master_role', {
+const MasterMember = sequelizeConnection.define('master_lookup', {
     id: {
         type: DataTypes.STRING,
         primaryKey: true,
@@ -10,8 +10,11 @@ const MasterRole = sequelizeConnection.define('master_role', {
     name: {
         type: DataTypes.STRING,
     },
-    code: {
+    type: {
         type: DataTypes.STRING,
+    },
+    value: {
+        type: DataTypes.INTEGER,
     },
     created_time: {
         type: DataTypes.DATE,
@@ -31,19 +34,19 @@ const MasterRole = sequelizeConnection.define('master_role', {
         type: DataTypes.INTEGER,
     },
 }, {
-    tableName: 'master_role',
-    timestamps: false, // karena pakai created_time & updated_time manual
-    freezeTableName: true,
+    tableName: 'master_lookup',
+    timestamps: false, // karena sudah pakai created_time & updated_time
+    freezeTableName: true, // biar nama tabel gak dijamakkan
 });
 
 
 sequelizeConnection
     .sync()
     .then(() => {
-        console.log('Tabel master_role berhasil disinkronisasi.');
+        console.log('Tabel master_lookup berhasil disinkronisasi.');
     })
     .catch((error) => {
         console.error('Terjadi kesalahan:', error);
     });
 
-module.exports = MasterRole;
+module.exports = MasterMember;

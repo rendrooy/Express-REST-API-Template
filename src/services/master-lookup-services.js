@@ -3,35 +3,35 @@ const uuidv4 = require('uuid');
 const moment = require('moment');
 const bcrypt = require('bcrypt');
 const locales = require('../config/locales');
-const masterMemberModel = require('../model/master-member-model');
-const { whereBuilder } = require('../connection/db');
-const { timeConfig } = require('../config');
+const masterLookupModel = require('../model/master-lookup-model');
+const {whereBuilder} = require('../connection/db');
+const {timeConfig} = require('../config');
 const {
     operatorTypes,
     queryOption,
 } = require('../connection/query-builder');
-const { Op } = require('sequelize');
+const {Op} = require('sequelize');
 
 
-const getMember = async (currentUser, params) => {
+const getLookup = async (currentUser, params) => {
     try {
-        const memberData = await masterMemberModel.findOne({
+        const lookupData = await masterLookupModel.findOne({
             where: {
                 id: params.id,
                 is_deleted: 0,
             },
         });
-        if (memberData == null) {
+        if (lookupData == null) {
             return {
                 status: 404,
                 error: {
                     message: locales.resource_not_found,
                 },
             };
-        } else return memberData;
+        } else return lookupData;
     } catch (error) {
         console.error(
-            'Error: Unable to execute masterMemberService.getAll => ',
+            'Error: Unable to execute masterLookupService.getAll => ',
             error
         );
         return {
@@ -43,7 +43,7 @@ const getMember = async (currentUser, params) => {
     }
 };
 
-const findMember = async (currentUser, params) => {
+const findLookup = async (currentUser, params) => {
     try {
         const limit = parseInt(params.limit || queryOption.limit);
         const page = parseInt(params.page || queryOption.page);
@@ -65,14 +65,14 @@ const findMember = async (currentUser, params) => {
                 value: params.name,
             });
         }
-        if (params.code) {
+        if (params.type) {
             conditions.push({
-                column: 'code',
-                operator: operatorTypes.like,
-                value: params.code,
+                column: 'type',
+                operator: operatorTypes.equal,
+                value: params.type,
             });
         }
-        const members = await masterMemberModel.findAll({
+        const lookups = await masterLookupModel.findAll({
             where: await whereBuilder(conditions),
 
             order: [[order.order_by, order.order_dir]],
@@ -80,19 +80,18 @@ const findMember = async (currentUser, params) => {
             limit: limit,
         });
 
-        const filteredCount = members.length;
-        const totalCount = await masterMemberModel.count(
-            {
+        const filteredCount = lookups.length;
+        const totalCount = await masterLookupModel.count({
                 where: {
                     is_deleted: 0, // ✅ cuma hitung yang belum dihapus
                 },
             }
         );
         console.log(totalCount);
-        return { totalCount: totalCount, count: filteredCount, data: members };
+        return {totalCount: totalCount, count: filteredCount, data: lookups};
     } catch (error) {
         console.error(
-            'Error: Unable to execute masterMemberService.getAll => ',
+            'Error: Unable to execute masterLookupService.getAll => ',
             error
         );
         return {
@@ -104,42 +103,41 @@ const findMember = async (currentUser, params) => {
     }
 };
 
-const insertMember = async (currentUser, params) => {
+const insertLookup = async (currentUser, params) => {
     try {
         const now = moment().toDate();
         // CHECK USERNAME / EMAIL
-        const memberData = await masterMemberModel.findOne({
+        const lookupData = await masterLookupModel.findOne({
             where: {
                 [Op.and]: [
-                    {
-                        [Op.or]: [
-                            { nik: params.nik },
-                        ],
-                    },
-                    { is_deleted: 0 },
+                    {value: params.value},
+                    {type: params.type},
+                    {is_deleted: 0},
                 ],
             },
         });
+        // return lookupData.dataValues;
 
-        if (memberData != null) return {
+        if (lookupData != null) return {
             status: 401,
             error: {
                 message: locales.resource_already_exists,
             },
         };
 
-        // INSERT DATA
-        const newMember = await masterMemberModel.create({
+        const data = {
             ...params,
             id: uuidv4.v4(),
+            created_by_id: currentUser.id,
             created_time: now,
-            updated_time: now,
             is_deleted: 0
-        });
-        return newMember
+        }
+
+        // INSERT DATA
+        return await masterLookupModel.create(data);
     } catch (error) {
         console.error(
-            'Error: Unable to execute masterMemberService.getAll => ',
+            'Error: Unable to execute masterLookupService.getAll => ',
             error
         );
         return {
@@ -151,24 +149,25 @@ const insertMember = async (currentUser, params) => {
     }
 };
 
-const updateMember = async (currentUser, params) => {
+const updateLookup = async (currentUser, params) => {
     try {
         const now = moment().toDate();
-        const memberIdToUpdate = params.id;
-        const [rowCount, [updatedMember]] = await masterMemberModel.update(
+        const lookupIdToUpdate = params.id;
+        const [rowCount, [updatedLookup]] = await masterLookupModel.update(
             {
                 ...params,
-                updated_time: now
+                updated_time: now,
+                updated_by_id: currentUser.id
             }, {
-            where: {
-                id: memberIdToUpdate,
-            },
-            returning: true,
-        });
+                where: {
+                    id: lookupIdToUpdate,
+                },
+                returning: true,
+            });
 
         if (rowCount > 0) {
-            console.log('Data yang telah di-update:', updatedMember.toJSON());
-            return updatedMember;
+            console.log('Data yang telah di-update:', updatedLookup.toJSON());
+            return updatedLookup;
         } else {
             console.log('Data tidak ditemukan atau tidak ada perubahan.');
             return {
@@ -180,7 +179,7 @@ const updateMember = async (currentUser, params) => {
         }
     } catch (error) {
         console.error(
-            'Error: Unable to execute masterMemberService.update => ',
+            'Error: Unable to execute masterLookupService.update => ',
             error
         );
         return {
@@ -192,26 +191,27 @@ const updateMember = async (currentUser, params) => {
     }
 };
 
-const deleteMember = async (currentUser, params) => {
+const deleteLookup = async (currentUser, params) => {
     try {
         const now = moment().toDate();
-        const memberIdToDelete = params.id;
+        const lookupIdToDelete = params.id;
         const paramsDelete = {
-            is_deleted: 1
+            is_deleted: 1,
+            updated_by_id: currentUser.id,
+            updated_time: now
         }
-        const [rowCount, [updatedMember]] = await masterMemberModel.update(
+        const [rowCount, [updatedLookup]] = await masterLookupModel.update(
             {
                 ...paramsDelete,
-                updated_time: now
             }, {
-            where: {
-                id: memberIdToDelete,
-            },
-            returning: true,
-        });
+                where: {
+                    id: lookupIdToDelete,
+                },
+                returning: true,
+            });
         if (rowCount > 0) {
             console.log('Data telah dihapus.');
-            return { ...params, rowsAffected: rowCount };
+            return {...params, rowsAffected: rowCount};
         } else {
             console.log('Data tidak ditemukan atau tidak ada yang dihapus.');
             return {
@@ -223,7 +223,7 @@ const deleteMember = async (currentUser, params) => {
         }
     } catch (error) {
         console.error(
-            'Error: Unable to execute masterMemberService.delete => ',
+            'Error: Unable to execute masterLookupService.delete => ',
             error
         );
         return {
@@ -236,9 +236,9 @@ const deleteMember = async (currentUser, params) => {
 };
 
 module.exports = {
-    getMember,
-    findMember,
-    insertMember,
-    updateMember,
-    deleteMember,
+    getLookup,
+    findLookup,
+    insertLookup,
+    updateLookup,
+    deleteLookup,
 };

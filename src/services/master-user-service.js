@@ -15,7 +15,7 @@ const {
 const { Op } = require('sequelize'); 
 
 
-const getUser = async (params) => {
+const getUser = async (currentUser, params) => {
   try {
     const userData = await masterUserModel.findOne({
       where: {
@@ -57,8 +57,10 @@ const getUser = async (params) => {
   }
 };
 
-const findUser = async (params) => {
+const findUser = async (currentUser, params) => {
     try {
+      return currentUser;
+      // console.log(currentUser);
       const limit = parseInt(params.limit || queryOption.limit);
       const page = parseInt(params.page || queryOption.page);
       const offset = (page - 1) * limit;
@@ -125,7 +127,7 @@ const findUser = async (params) => {
     }
 };
 
-const insertUser = async (params) => {
+const insertUser = async (currentUser, params) => {
   try {
     const now = moment().toDate();
     const saltRounds = 10;
@@ -205,7 +207,7 @@ const insertUser = async (params) => {
   }
 };
 
-const updateUser = async (params) => {
+const updateUser = async (currentUser, params) => {
   try {
     const now = moment().toDate();
     const userIdToUpdate = params.id;
@@ -246,7 +248,7 @@ const updateUser = async (params) => {
   }
 };
 
-const deleteUser = async (params) => {
+const deleteUser = async (currentUser, params) => {
   try {
     const userIdToDelete = params.id;
     const now = moment().toDate();

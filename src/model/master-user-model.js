@@ -19,7 +19,7 @@ const MasterUser = sequelizeConnection.define('master_user', {
         type: DataTypes.STRING,
     },
     token: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT, // ganti dari STRING ke TEXT
     },
     role_id: {
         type: DataTypes.STRING,
@@ -40,6 +40,14 @@ const MasterUser = sequelizeConnection.define('master_user', {
     },
     updated_time: {
         type: DataTypes.DATE,
+    },
+    created_by_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    updated_by_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
     },
     is_deleted: {
         type: DataTypes.INTEGER,

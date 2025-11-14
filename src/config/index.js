@@ -10,7 +10,7 @@ const dbConection = {
   user: 'postgres',
   host: 'localhost',
   database: 'postgres',
-  password: 'your_secure_password',
+  password: 'postgres',
   port: 5432, // Port default PostgreSQL
 };
 

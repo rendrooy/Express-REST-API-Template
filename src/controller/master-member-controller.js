@@ -4,22 +4,22 @@ const member = require('../services/master-member-services');
 const { request } = require('express');
 
 const getMember = async (req, res) => {
-    appResponse.build(res, await member.getMember(req.body));
+    appResponse.build(res, await member.getMember(req.currentUser, req.body));
 };
 const findMember = async (req, res) => {
-    appResponse.build(res, await member.findMember(req.body));
+    appResponse.build(res, await member.findMember(req.currentUser, req.body));
 };
 
 const insertMember = async (req, res) => {
-    appResponse.build(res, await member.insertMember(req.body));
+    appResponse.build(res, await member.insertMember(req.currentUser, req.body));
 };
 
 const updateMember = async (req, res) => {
-    appResponse.build(res, await member.updateMember(req.body));
+    appResponse.build(res, await member.updateMember(req.currentUser, req.body));
 };
 
 const deleteMember = async (req, res) => {
-    appResponse.build(res, await member.deleteMember(req.body));
+    appResponse.build(res, await member.deleteMember(req.currentUser, req.body));
 };
 
 module.exports = {
