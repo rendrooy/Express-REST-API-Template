@@ -133,7 +133,7 @@ const insertMember = async (currentUser, params) => {
             ...params,
             id: uuidv4.v4(),
             created_time: now,
-            updated_time: now,
+            created_by_id: currentUser.id,
             is_deleted: 0
         });
         return newMember
@@ -158,6 +158,7 @@ const updateMember = async (currentUser, params) => {
         const [rowCount, [updatedMember]] = await masterMemberModel.update(
             {
                 ...params,
+                updated_by_id: currentUser.id,
                 updated_time: now
             }, {
             where: {
@@ -202,6 +203,7 @@ const deleteMember = async (currentUser, params) => {
         const [rowCount, [updatedMember]] = await masterMemberModel.update(
             {
                 ...paramsDelete,
+                updated_by_id: currentUser.id,
                 updated_time: now
             }, {
             where: {

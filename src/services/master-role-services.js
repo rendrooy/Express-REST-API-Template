@@ -134,7 +134,7 @@ const insertRole = async (currentUser, params) => {
             ...params,
             id: uuidv4.v4(),
             created_time: now,
-            updated_time: now,
+            created_by_id: currentUser.id,
             is_deleted: 0
         });
         return newRole
@@ -159,6 +159,7 @@ const updateRole = async (currentUser, params) => {
         const [rowCount, [updatedRole]] = await masterRoleModel.update(
             {
                 ...params,
+                updated_by_id: currentUser.id,
                 updated_time: now
             }, {
             where: {
@@ -203,6 +204,7 @@ const deleteRole = async (currentUser, params) => {
         const [rowCount, [updatedRole]] = await masterRoleModel.update(
             {
                 ...paramsDelete,
+                updated_by_id: currentUser.id,
                 updated_time: now
             }, {
             where: {

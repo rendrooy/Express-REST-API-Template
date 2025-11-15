@@ -167,7 +167,7 @@ const insertFamily = async (currentUser,params) => {
             ...params,
             id: uuidv4.v4(),
             created_time: now,
-            updated_time: now,
+            created_by_id: currentUser.id,
             is_deleted: 0
         });
         return newFamily
@@ -192,6 +192,7 @@ const updateFamily = async (currentUser,params) => {
         const [rowCount, [updatedFamily]] = await masterFamilyModel.update(
             {
                 ...params,
+                updated_by_id: currentUser.id,
                 updated_time: now
             }, {
             where: {
@@ -236,6 +237,7 @@ const deleteFamily = async (currentUser,params) => {
         const [rowCount, [updatedFamily]] = await masterFamilyModel.update(
             {
                 ...paramsDelete,
+                updated_by_id: currentUser.id,
                 updated_time: now
             }, {
             where: {
