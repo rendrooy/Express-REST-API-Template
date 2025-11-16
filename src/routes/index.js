@@ -13,6 +13,8 @@ const lookup = require('../controller/master-lookup-controller');
 const family = require('../controller/master-family-controller');
 const member = require('../controller/master-member-controller');
 const vehicle = require('../controller/master-vehicle-controller');
+const news = require('../controller/master-news-controller');
+const { upload } = require('../connection/multer-config');
 
 router.get('/', (req, res) => {
   res.send({ message: 'Hello world' });
@@ -29,42 +31,49 @@ router.post('/auth/register', auth.register);
 
 
 // Master Data
-router.post('/get-user', authSrv.authenticateUser, user.getUser);
-router.post('/find-user', authSrv.authenticateUser, user.findUser);
-router.post('/insert-user', user.insertUser);
-router.post('/update-user', authSrv.authenticateUser, user.updateUser);
-router.post('/delete-user', authSrv.authenticateUser, user.deleteUser);
+router.post('/user/get-data', authSrv.authenticateUser, user.getUser);
+router.post('/user/find-data', authSrv.authenticateUser, user.findUser);
+router.post('/user/insert-data', user.insertUser);
+router.post('/user/update-data', authSrv.authenticateUser, user.updateUser);
+router.post('/user/delete-data', authSrv.authenticateUser, user.deleteUser);
 
-router.post('/get-lookup', authSrv.authenticateUser, lookup.getLookup);
-router.post('/find-lookup', authSrv.authenticateUser, lookup.findLookup);
-router.post('/insert-lookup', authSrv.authenticateUser, lookup.insertLookup);
-router.post('/update-lookup', authSrv.authenticateUser, lookup.updateLookup);
-router.post('/delete-lookup', authSrv.authenticateUser, lookup.deleteLookup);
+router.post('/lookup/get-data', authSrv.authenticateUser, lookup.getLookup);
+router.post('/lookup/find-data', authSrv.authenticateUser, lookup.findLookup);
+router.post('/lookup/insert-data', authSrv.authenticateUser, lookup.insertLookup);
+router.post('/lookup/update-data', authSrv.authenticateUser, lookup.updateLookup);
+router.post('/lookup/delete-data', authSrv.authenticateUser, lookup.deleteLookup);
 
 
-router.post('/get-role', authSrv.authenticateUser, role.getRole);
-router.post('/find-role', authSrv.authenticateUser, role.findRole);
-router.post('/insert-role', authSrv.authenticateUser, role.insertRole);
-router.post('/update-role', authSrv.authenticateUser, role.updateRole);
-router.post('/delete-role', authSrv.authenticateUser, role.deleteRole);
+router.post('/role/get-data', authSrv.authenticateUser, role.getRole);
+router.post('/role/find-data', authSrv.authenticateUser, role.findRole);
+router.post('/role/insert-data', authSrv.authenticateUser, role.insertRole);
+router.post('/role/update-data', authSrv.authenticateUser, role.updateRole);
+router.post('/role/delete-data', authSrv.authenticateUser, role.deleteRole);
 
-router.post('/get-family', authSrv.authenticateUser, family.getFamily);
-router.post('/find-family', authSrv.authenticateUser, family.findFamily);
-router.post('/insert-family', authSrv.authenticateUser, family.insertFamily);
-router.post('/update-family', authSrv.authenticateUser, family.updateFamily);
-router.post('/delete-family', authSrv.authenticateUser, family.deleteFamily);
+router.post('/family/get-data', authSrv.authenticateUser, family.getFamily);
+router.post('/family/find-data', authSrv.authenticateUser, family.findFamily);
+router.post('/family/insert-data', authSrv.authenticateUser, family.insertFamily);
+router.post('/family/update-data', authSrv.authenticateUser, family.updateFamily);
+router.post('/family/delete-data', authSrv.authenticateUser, family.deleteFamily);
 
-router.post('/get-member', authSrv.authenticateUser, member.getMember);
-router.post('/find-member', authSrv.authenticateUser, member.findMember);
-router.post('/insert-member', authSrv.authenticateUser, member.insertMember);
-router.post('/update-member', authSrv.authenticateUser, member.updateMember);
-router.post('/delete-member', authSrv.authenticateUser, member.deleteMember);
+router.post('/member/get-data', authSrv.authenticateUser, member.getMember);
+router.post('/member/find-data', authSrv.authenticateUser, member.findMember);
+router.post('/member/insert-data', authSrv.authenticateUser, member.insertMember);
+router.post('/member/update-data', authSrv.authenticateUser, member.updateMember);
+router.post('/member/delete-data', authSrv.authenticateUser, member.deleteMember);
 
-router.post('/get-vehicle', authSrv.authenticateUser, vehicle.getVehicle);
-router.post('/find-vehicle', authSrv.authenticateUser, vehicle.findVehicle);
-router.post('/insert-vehicle', authSrv.authenticateUser, vehicle.insertVehicle);
-router.post('/update-vehicle', authSrv.authenticateUser, vehicle.updateVehicle);
-router.post('/delete-vehicle', authSrv.authenticateUser, vehicle.deleteVehicle);
+router.post('/vehicle/get-data', authSrv.authenticateUser, vehicle.getVehicle);
+router.post('/vehicle/find-data', authSrv.authenticateUser, vehicle.findVehicle);
+router.post('/vehicle/insert-data', authSrv.authenticateUser, vehicle.insertVehicle);
+router.post('/vehicle/update-data', authSrv.authenticateUser, vehicle.updateVehicle);
+router.post('/vehicle/delete-data', authSrv.authenticateUser, vehicle.deleteVehicle);
+
+router.post('/news/get-data', authSrv.authenticateUser, news.getNews);
+router.post('/news/find-data', authSrv.authenticateUser, news.findNews);
+router.post('/news/insert-data', authSrv.authenticateUser, news.insertNews);
+router.post('/news/update-data', authSrv.authenticateUser, news.updateNews);
+router.post('/news/upload-data', authSrv.authenticateUser, news.uploadNews);
+router.post('/news/delete-data', authSrv.authenticateUser, news.deleteNews);
 
 
 

@@ -79,45 +79,28 @@ const login = async (params) => {
 };
 
 const authenticateUser = async (req, res, next) => {
-    const authorizations = (req.headers.authorization || `Bearer ${req.query.authToken}`).split(' ');
+    // const authorizations = (req.headers.authorization || `Bearer ${req.query.authToken}`).split(' ');
     // console.log('authorizations ', authorizations);
-    const token = await authorizations[1];
-    if (!token) {
-        return res.status(401).json({ message: "Token missing" });
-    }
+    // const token = await authorizations[1];
+    // if (!token) {
+    //     return res.status(401).json({ message: "Token missing" });
+    // }
 
     try {
-        const decoded = jwt.verify(token, 'rahasia');
-        req.currentUser = decoded; // simpan decoded ke request
+        const resVerify = await verfyToken(req);
+        req.currentUser = resVerify; // simpan decoded ke request
         next();
     } catch (err) {
         return res.status(401).json({ message: "Invalid token" });
     }
-    
-    
-    // console.log(authorizations[1]);
-    // next()
-    // if (currentUser.error || !currentUser.result) {
-    //     res.status(401);
-    //     res.send({
-    //         error: {
-    //             message: locales.invalid_access_token,
-    //         },
-    //     });
-    // } else {
-    //     if (currentUser.result.useragent === req.headers['user-agent']) {
-    //         req.currentUser = currentUser.result;
-    //         next();
-    //     } else {
-    //         res.status(401);
-    //         res.send({
-    //             error: {
-    //                 message: locales.invalid_access_token,
-    //             },
-    //         });
-    //     }
-    // }
 };
+
+const verfyToken = async (req) => {
+    const authorizations = (req.headers.authorization || `Bearer ${req.query.authToken}`).split(' ');
+    // console.log('authorizations ', authorizations);
+    const token = await authorizations[1];
+    return jwt.verify(token, 'rahasia');
+}
 
 const register = async (params) => {
     try {
@@ -133,5 +116,6 @@ const register = async (params) => {
 module.exports = {
     login,
     register,
-    authenticateUser
+    authenticateUser,
+    verfyToken
 };

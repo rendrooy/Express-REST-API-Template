@@ -1,45 +1,32 @@
 const multer = require('multer');
-const uuidv4 = require('uuid');
-const { timeConfig } = require('../config');
+const uuid = require('uuid');
+const {timeConfig} = require('../config');
 
 const moment = require('moment');
-const { NewsMedia } = require('../model/newsMediaModel');
+const {MasterMediaModel} = require('../model/master-media-model');
 
 let resFileName = '';
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    //   if (file.fieldname === 'resume') {
-    //     // if uploading resume
-    //     cb(null, 'resumes');
-    //   } else {
-    //     // else uploading image
-    //     cb(
-    //       null,
-    //       'C:/Users/1473/Desktop/Project/Express-REST-API-Template/src/storages'
-    //     );
-    //   }
-    // },
-    cb(
-      null,
-      'C:/Users/1473/Desktop/Project/Express-REST-API-Template/src/storages'
-    );
-  },
-  filename: function (req, file, cb) {
-    console.log(req.headers);
-    const now = moment().format(timeConfig.moment);
-    NewsMedia.create({
-      id: uuidv4.v4(),
-      filename: Date.now() + '-' + file.originalname,
-      newsid: req.headers['news-id'],
-      originalname: file.originalname,
-      createdat: now,
-      updatedat: now,
-    });
-    cb(null, Date.now() + '-' + file.originalname);
-  },
+    destination: function (req, file, cb) {
+        cb(
+            null,
+            'D:/Project/Web/BE/Express-REST-API-Template/src/storages'
+        );
+    },
+    filename: function (req, file, cb) {
+        console.log(req.headers);
+        const now = moment().format(timeConfig.moment);
+        MasterMediaModel.create({
+          id: uuid.v4(),
+          file_name: Date.now() + '-' + file.originalname,
+          created_time: now,
+        });
+
+        cb(null, Date.now() + '-' + file.originalname)
+    },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({storage: storage});
 
-module.exports = { upload, resFileName };
+module.exports = {upload, resFileName};

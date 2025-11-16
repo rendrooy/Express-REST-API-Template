@@ -14,7 +14,13 @@ const dbConection = {
   port: 5432, // Port default PostgreSQL
 };
 
+const fileTypes = {
+  news: 'news-media',
+  transaction:"transaction-mmedia"
+}
+
 module.exports = {
   timeConfig,
   dbConection,
+  fileTypes,
 };
