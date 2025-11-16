@@ -1,20 +1,27 @@
 const { DataTypes } = require('sequelize');
 const { sequelizeConnection } = require('../connection/db');
 
-const MasterLookup = sequelizeConnection.define('master_lookup', {
+const MasterVehicle = sequelizeConnection.define('master_vehicle', {
     id: {
         type: DataTypes.STRING,
         primaryKey: true,
         allowNull: false,
     },
-    name: {
+    model: {
         type: DataTypes.STRING,
     },
-    type: {
+    brand: {
         type: DataTypes.STRING,
     },
-    value: {
-        type: DataTypes.INTEGER,
+    license_plate: {
+        type: DataTypes.STRING,
+    },
+    family_id: {
+        type: DataTypes.STRING,
+        references: {
+            model: 'master_family',
+            key: 'id',
+        },
     },
     created_time: {
         type: DataTypes.DATE,
@@ -34,7 +41,7 @@ const MasterLookup = sequelizeConnection.define('master_lookup', {
         type: DataTypes.INTEGER,
     },
 }, {
-    tableName: 'master_lookup',
+    tableName: 'master_vehicle',
     timestamps: false, // karena sudah pakai created_time & updated_time
     freezeTableName: true, // biar nama tabel gak dijamakkan
 });
@@ -43,10 +50,10 @@ const MasterLookup = sequelizeConnection.define('master_lookup', {
 sequelizeConnection
     .sync()
     .then(() => {
-        console.log('Tabel master_lookup berhasil disinkronisasi.');
+        console.log('Tabel master_vehicle berhasil disinkronisasi.');
     })
     .catch((error) => {
         console.error('Terjadi kesalahan:', error);
     });
 
-module.exports = MasterLookup;
+module.exports = MasterVehicle;

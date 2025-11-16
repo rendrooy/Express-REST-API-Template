@@ -12,6 +12,7 @@ const role = require('../controller/master-role-controller');
 const lookup = require('../controller/master-lookup-controller');
 const family = require('../controller/master-family-controller');
 const member = require('../controller/master-member-controller');
+const vehicle = require('../controller/master-vehicle-controller');
 
 router.get('/', (req, res) => {
   res.send({ message: 'Hello world' });
@@ -58,6 +59,12 @@ router.post('/find-member', authSrv.authenticateUser, member.findMember);
 router.post('/insert-member', authSrv.authenticateUser, member.insertMember);
 router.post('/update-member', authSrv.authenticateUser, member.updateMember);
 router.post('/delete-member', authSrv.authenticateUser, member.deleteMember);
+
+router.post('/get-vehicle', authSrv.authenticateUser, vehicle.getVehicle);
+router.post('/find-vehicle', authSrv.authenticateUser, vehicle.findVehicle);
+router.post('/insert-vehicle', authSrv.authenticateUser, vehicle.insertVehicle);
+router.post('/update-vehicle', authSrv.authenticateUser, vehicle.updateVehicle);
+router.post('/delete-vehicle', authSrv.authenticateUser, vehicle.deleteVehicle);
 
 
 
