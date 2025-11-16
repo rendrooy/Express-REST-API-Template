@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const { sequelizeConnection } = require('../connection/db');
+const {DataTypes} = require('sequelize');
+const {sequelizeConnection} = require('../connection/db');
 
 const MasterMedia = sequelizeConnection.define('master_media', {
     id: {

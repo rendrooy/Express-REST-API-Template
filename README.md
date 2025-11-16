@@ -3,7 +3,10 @@
 
 # Express-REST-API-Template
 
-Simple express boilerplate based off of [express-generator](https://expressjs.com/en/starter/generator.html). Includes [eslint](https://eslint.org) and [prettier](https://prettier.io) for linting/code formatting, [nodemon](https://github.com/remy/nodemon) for automatic server restarting, and [Jest](https://jestjs.io) for testing.
+Simple express boilerplate based off of [express-generator](https://expressjs.com/en/starter/generator.html).
+Includes [eslint](https://eslint.org) and [prettier](https://prettier.io) for linting/code
+formatting, [nodemon](https://github.com/remy/nodemon) for automatic server restarting, and [Jest](https://jestjs.io)
+for testing.
 
 ## Getting Started
 
@@ -37,6 +40,7 @@ npm run test:watch
 ```
 
 ### Linting
+
 ```
 npm run lint
 

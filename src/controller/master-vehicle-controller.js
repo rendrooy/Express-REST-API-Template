@@ -1,7 +1,6 @@
-
 const appResponse = require('./app-response');
 const vehicle = require('../services/master-vehicle-services');
-const { request } = require('express');
+const {request} = require('express');
 
 const getVehicle = async (req, res) => {
     appResponse.build(res, await vehicle.getVehicle(req.currentUser, req.body));

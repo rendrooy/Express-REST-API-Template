@@ -1,7 +1,6 @@
-
 const appResponse = require('./app-response');
 const news = require('../services/master-news-services');
-const { request } = require('express');
+const {request} = require('express');
 
 const getNews = async (req, res) => {
     appResponse.build(res, await news.getNews(req.currentUser, req.body));

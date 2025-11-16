@@ -18,9 +18,9 @@ const storage = multer.diskStorage({
         console.log(req.headers);
         const now = moment().format(timeConfig.moment);
         MasterMediaModel.create({
-          id: uuid.v4(),
-          file_name: Date.now() + '-' + file.originalname,
-          created_time: now,
+            id: uuid.v4(),
+            file_name: Date.now() + '-' + file.originalname,
+            created_time: now,
         });
 
         cb(null, Date.now() + '-' + file.originalname)

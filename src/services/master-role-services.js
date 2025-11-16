@@ -5,13 +5,13 @@ const bcrypt = require('bcrypt');
 const locales = require('../config/locales');
 const masterRoleModel = require('../model/master-role-model');
 const masterMemberModel = require('../model/master-member-model');
-const { whereBuilder } = require('../connection/db');
-const { timeConfig } = require('../config');
+const {whereBuilder} = require('../connection/db');
+const {timeConfig} = require('../config');
 const {
     operatorTypes,
     queryOption,
 } = require('../connection/query-builder');
-const { Op } = require('sequelize');
+const {Op} = require('sequelize');
 
 
 const getRole = async (currentUser, params) => {
@@ -83,13 +83,13 @@ const findRole = async (currentUser, params) => {
 
         const filteredCount = roles.length;
         const totalCount = await masterRoleModel.count({
-            where: {
-                is_deleted: 0, // ✅ cuma hitung yang belum dihapus
-            },
-        }
-);
+                where: {
+                    is_deleted: 0, // ✅ cuma hitung yang belum dihapus
+                },
+            }
+        );
         console.log(totalCount);
-        return { totalCount: totalCount, count: filteredCount, data: roles };
+        return {totalCount: totalCount, count: filteredCount, data: roles};
     } catch (error) {
         console.error(
             'Error: Unable to execute masterRoleService.getAll => ',
@@ -113,11 +113,11 @@ const insertRole = async (currentUser, params) => {
                 [Op.and]: [
                     {
                         [Op.or]: [
-                            { code: params.code },
-                            { name: params.name },
+                            {code: params.code},
+                            {name: params.name},
                         ],
                     },
-                    { is_deleted: 0 },
+                    {is_deleted: 0},
                 ],
             },
         });
@@ -162,11 +162,11 @@ const updateRole = async (currentUser, params) => {
                 updated_by_id: currentUser.id,
                 updated_time: now
             }, {
-            where: {
-                id: roleIdToUpdate,
-            },
-            returning: true,
-        });
+                where: {
+                    id: roleIdToUpdate,
+                },
+                returning: true,
+            });
 
         if (rowCount > 0) {
             console.log('Data yang telah di-update:', updatedRole.toJSON());
@@ -207,14 +207,14 @@ const deleteRole = async (currentUser, params) => {
                 updated_by_id: currentUser.id,
                 updated_time: now
             }, {
-            where: {
-                id: roleIdToDelete,
-            },
-            returning: true,
-        });
+                where: {
+                    id: roleIdToDelete,
+                },
+                returning: true,
+            });
         if (rowCount > 0) {
             console.log('Data telah dihapus.');
-            return { ...params, rowsAffected: rowCount };
+            return {...params, rowsAffected: rowCount};
         } else {
             console.log('Data tidak ditemukan atau tidak ada yang dihapus.');
             return {

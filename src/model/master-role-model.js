@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const { sequelizeConnection } = require('../connection/db');
+const {DataTypes} = require('sequelize');
+const {sequelizeConnection} = require('../connection/db');
 
 const MasterRole = sequelizeConnection.define('master_role', {
     id: {

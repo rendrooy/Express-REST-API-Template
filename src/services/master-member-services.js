@@ -4,13 +4,13 @@ const moment = require('moment');
 const bcrypt = require('bcrypt');
 const locales = require('../config/locales');
 const masterMemberModel = require('../model/master-member-model');
-const { whereBuilder } = require('../connection/db');
-const { timeConfig } = require('../config');
+const {whereBuilder} = require('../connection/db');
+const {timeConfig} = require('../config');
 const {
     operatorTypes,
     queryOption,
 } = require('../connection/query-builder');
-const { Op } = require('sequelize');
+const {Op} = require('sequelize');
 
 
 const getMember = async (currentUser, params) => {
@@ -89,7 +89,7 @@ const findMember = async (currentUser, params) => {
             }
         );
         console.log(totalCount);
-        return { totalCount: totalCount, count: filteredCount, data: members };
+        return {totalCount: totalCount, count: filteredCount, data: members};
     } catch (error) {
         console.error(
             'Error: Unable to execute masterMemberService.getAll => ',
@@ -113,10 +113,10 @@ const insertMember = async (currentUser, params) => {
                 [Op.and]: [
                     {
                         [Op.or]: [
-                            { nik: params.nik },
+                            {nik: params.nik},
                         ],
                     },
-                    { is_deleted: 0 },
+                    {is_deleted: 0},
                 ],
             },
         });
@@ -161,11 +161,11 @@ const updateMember = async (currentUser, params) => {
                 updated_by_id: currentUser.id,
                 updated_time: now
             }, {
-            where: {
-                id: memberIdToUpdate,
-            },
-            returning: true,
-        });
+                where: {
+                    id: memberIdToUpdate,
+                },
+                returning: true,
+            });
 
         if (rowCount > 0) {
             console.log('Data yang telah di-update:', updatedMember.toJSON());
@@ -206,14 +206,14 @@ const deleteMember = async (currentUser, params) => {
                 updated_by_id: currentUser.id,
                 updated_time: now
             }, {
-            where: {
-                id: memberIdToDelete,
-            },
-            returning: true,
-        });
+                where: {
+                    id: memberIdToDelete,
+                },
+                returning: true,
+            });
         if (rowCount > 0) {
             console.log('Data telah dihapus.');
-            return { ...params, rowsAffected: rowCount };
+            return {...params, rowsAffected: rowCount};
         } else {
             console.log('Data tidak ditemukan atau tidak ada yang dihapus.');
             return {

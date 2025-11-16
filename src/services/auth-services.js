@@ -17,7 +17,7 @@ const loginTokenGenerator = async (currentUser) => {
     };
 
     // generate token
-    let token = jwt.sign(userResponse, secretKey, { expiresIn: '90 days' });
+    let token = jwt.sign(userResponse, secretKey, {expiresIn: '90 days'});
     // return token
     const [rowCount, [updatedUser]] = await masterUserModel.update({
         token: token,
@@ -91,7 +91,7 @@ const authenticateUser = async (req, res, next) => {
         req.currentUser = resVerify; // simpan decoded ke request
         next();
     } catch (err) {
-        return res.status(401).json({ message: "Invalid token" });
+        return res.status(401).json({message: "Invalid token"});
     }
 };
 

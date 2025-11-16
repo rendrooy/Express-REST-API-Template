@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const { sequelizeConnection } = require('../connection/db');
+const {DataTypes} = require('sequelize');
+const {sequelizeConnection} = require('../connection/db');
 
 const MasterLookup = sequelizeConnection.define('master_lookup', {
     id: {

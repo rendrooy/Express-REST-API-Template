@@ -6,21 +6,15 @@ const uuidv4 = require('uuid');
 const moment = require('moment');
 const bcrypt = require('bcrypt');
 const locales = require('../config/locales');
-const { verfyToken } = require('./auth-services');
+const {verfyToken} = require('./auth-services');
 const masterNewsModel = require('../model/master-news-model');
 const masterMediaModel = require('../model/master-media-model');
 const {whereBuilder} = require('../connection/db');
 
-const { formidable } = require('formidable');
+const {formidable} = require('formidable');
 const {timeConfig, fileTypes} = require('../config');
-const {
-    operatorTypes,
-    queryOption,
-} = require('../connection/query-builder');
+const {operatorTypes, queryOption} = require('../connection/query-builder');
 const {Op} = require('sequelize');
-
-
-
 
 const getNews = async (currentUser, params) => {
     try {
@@ -237,7 +231,7 @@ const uploadFile = async (req, callback) => {
         const news_id = req.headers["id"];
         const fileType = req.headers["type"];
         const now = moment().toDate();
-        
+
         const newsData = await masterNewsModel.findOne({
             where: {
                 id: news_id,
@@ -248,14 +242,14 @@ const uploadFile = async (req, callback) => {
         if (!newsData) {
             return callback({
                 status: 404,
-                error: { message: locales.resource_not_found },
+                error: {message: locales.resource_not_found},
             });
         }
 
         if (fileType !== fileTypes.news) {
             return callback({
                 status: 500,
-                error: { message: locales.unable_to_handle_request },
+                error: {message: locales.unable_to_handle_request},
             });
         }
 
@@ -271,14 +265,14 @@ const uploadFile = async (req, callback) => {
                 console.error(err);
                 return callback({
                     status: 500,
-                    error: { message: locales.unable_to_handle_request },
+                    error: {message: locales.unable_to_handle_request},
                 });
             }
             const file = files.file?.[0];
             if (!file) {
                 return callback({
                     status: 400,
-                    error: { message: "No file received" },
+                    error: {message: "No file received"},
                 });
             }
 
@@ -299,15 +293,15 @@ const uploadFile = async (req, callback) => {
                 // ensure folder exists
                 await fs.promises.mkdir(
                     path.join(process.cwd(), "src", "storages"),
-                    { recursive: true }
+                    {recursive: true}
                 );
 
                 // >>> FIX: rename diganti copy → delete
                 await fs.promises.copyFile(oldPath, storagePath);
                 await fs.promises.unlink(oldPath);
-                
+
                 // const data = 
-                
+
 
                 const dataMediaModel = await masterMediaModel.create(
                     {
@@ -319,14 +313,14 @@ const uploadFile = async (req, callback) => {
                         is_deleted: 0
                     }
                 )
-                
+
                 return callback(dataMediaModel);
 
             } catch (moveErr) {
                 console.error("MOVE FILE ERROR:", moveErr);
                 return callback({
                     status: 500,
-                    error: { message: locales.unable_to_handle_request },
+                    error: {message: locales.unable_to_handle_request},
                 });
             }
         });
@@ -335,7 +329,7 @@ const uploadFile = async (req, callback) => {
         console.error("Error uploadFile => ", error);
         callback({
             status: 500,
-            error: { message: locales.unable_to_handle_request },
+            error: {message: locales.unable_to_handle_request},
         });
     }
 };

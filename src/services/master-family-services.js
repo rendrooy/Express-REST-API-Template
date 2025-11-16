@@ -5,17 +5,17 @@ const bcrypt = require('bcrypt');
 const locales = require('../config/locales');
 const masterFamilyModel = require('../model/master-family-model');
 const masterMemberModel = require('../model/master-member-model');
-const { whereBuilder } = require('../connection/db');
-const { timeConfig } = require('../config');
+const {whereBuilder} = require('../connection/db');
+const {timeConfig} = require('../config');
 const {
     operatorTypes,
     queryOption,
 } = require('../connection/query-builder');
-const { Op } = require('sequelize');
+const {Op} = require('sequelize');
 const MasterMember = require('../model/master-member-model');
 
 
-const getFamily = async (currentUser,params) => {
+const getFamily = async (currentUser, params) => {
     try {
         const familyData = await masterFamilyModel.findOne({
             where: {
@@ -62,7 +62,7 @@ const getFamily = async (currentUser,params) => {
     }
 };
 
-const findFamily = async (currentUser,params) => {
+const findFamily = async (currentUser, params) => {
     try {
         const limit = parseInt(params.limit || queryOption.limit);
         const page = parseInt(params.page || queryOption.page);
@@ -122,7 +122,7 @@ const findFamily = async (currentUser,params) => {
             }
         );
         console.log(totalCount);
-        return { totalCount: totalCount, count: filteredCount, data: familyData };
+        return {totalCount: totalCount, count: filteredCount, data: familyData};
     } catch (error) {
         console.error(
             'Error: Unable to execute masterFamilyService.getAll => ',
@@ -137,7 +137,7 @@ const findFamily = async (currentUser,params) => {
     }
 };
 
-const insertFamily = async (currentUser,params) => {
+const insertFamily = async (currentUser, params) => {
     try {
         const now = moment().toDate();
         // CHECK USERNAME / EMAIL
@@ -146,11 +146,11 @@ const insertFamily = async (currentUser,params) => {
                 [Op.and]: [
                     {
                         [Op.or]: [
-                            { no_kk: params.no_kk },
-                            { no_pbb: params.no_pbb },
+                            {no_kk: params.no_kk},
+                            {no_pbb: params.no_pbb},
                         ],
                     },
-                    { is_deleted: 0 },
+                    {is_deleted: 0},
                 ],
             },
         });
@@ -185,7 +185,7 @@ const insertFamily = async (currentUser,params) => {
     }
 };
 
-const updateFamily = async (currentUser,params) => {
+const updateFamily = async (currentUser, params) => {
     try {
         const now = moment().toDate();
         const familyIdToUpdate = params.id;
@@ -195,11 +195,11 @@ const updateFamily = async (currentUser,params) => {
                 updated_by_id: currentUser.id,
                 updated_time: now
             }, {
-            where: {
-                id: familyIdToUpdate,
-            },
-            returning: true,
-        });
+                where: {
+                    id: familyIdToUpdate,
+                },
+                returning: true,
+            });
 
         if (rowCount > 0) {
             console.log('Data yang telah di-update:', updatedFamily.toJSON());
@@ -227,7 +227,7 @@ const updateFamily = async (currentUser,params) => {
     }
 };
 
-const deleteFamily = async (currentUser,params) => {
+const deleteFamily = async (currentUser, params) => {
     try {
         const now = moment().toDate();
         const familyIdToDelete = params.id;
@@ -240,14 +240,14 @@ const deleteFamily = async (currentUser,params) => {
                 updated_by_id: currentUser.id,
                 updated_time: now
             }, {
-            where: {
-                id: familyIdToDelete,
-            },
-            returning: true,
-        });
+                where: {
+                    id: familyIdToDelete,
+                },
+                returning: true,
+            });
         if (rowCount > 0) {
             console.log('Data telah dihapus.');
-            return { ...params, rowsAffected: rowCount };
+            return {...params, rowsAffected: rowCount};
         } else {
             console.log('Data tidak ditemukan atau tidak ada yang dihapus.');
             return {

@@ -1,7 +1,6 @@
-
 const appResponse = require('./app-response');
 const family = require('../services/master-family-services');
-const { request } = require('express');
+const {request} = require('express');
 
 const getFamily = async (req, res) => {
     appResponse.build(res, await family.getFamily(req.currentUser, req.body));

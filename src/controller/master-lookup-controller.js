@@ -1,7 +1,6 @@
-
 const appResponse = require('./app-response');
 const lookup = require('../services/master-lookup-services');
-const { request } = require('express');
+const {request} = require('express');
 
 const getLookup = async (req, res) => {
     appResponse.build(res, await lookup.getLookup(req.currentUser, req.body));

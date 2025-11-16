@@ -1,5 +1,5 @@
-const { sequelize, DataTypes } = require('sequelize');
-const { sequelizeConnection } = require('../connection/db');
+const {sequelize, DataTypes} = require('sequelize');
+const {sequelizeConnection} = require('../connection/db');
 const MasterRole = require('./master-role-model'); // pastikan ada model ini
 const MasterMember = require('./master-member-model'); // pastikan ada model ini
 

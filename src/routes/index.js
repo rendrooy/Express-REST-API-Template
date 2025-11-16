@@ -14,20 +14,19 @@ const family = require('../controller/master-family-controller');
 const member = require('../controller/master-member-controller');
 const vehicle = require('../controller/master-vehicle-controller');
 const news = require('../controller/master-news-controller');
-const { upload } = require('../connection/multer-config');
+const {upload} = require('../connection/multer-config');
 
 router.get('/', (req, res) => {
-  res.send({ message: 'Hello world' });
+    res.send({message: 'Hello world'});
 });
 
 router.get('/', (req, res) => {
-  res.send({ message: 'Hello world' });
+    res.send({message: 'Hello world'});
 });
 
 // Auth
 router.post('/auth/login', auth.login);
 router.post('/auth/register', auth.register);
-
 
 
 // Master Data
@@ -74,7 +73,6 @@ router.post('/news/insert-data', authSrv.authenticateUser, news.insertNews);
 router.post('/news/update-data', authSrv.authenticateUser, news.updateNews);
 router.post('/news/upload-data', authSrv.authenticateUser, news.uploadNews);
 router.post('/news/delete-data', authSrv.authenticateUser, news.deleteNews);
-
 
 
 module.exports = router;

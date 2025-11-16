@@ -1,7 +1,6 @@
-
 const appResponse = require('./app-response');
 const member = require('../services/master-member-services');
-const { request } = require('express');
+const {request} = require('express');
 
 const getMember = async (req, res) => {
     appResponse.build(res, await member.getMember(req.currentUser, req.body));

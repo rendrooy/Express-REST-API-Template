@@ -1,7 +1,6 @@
-
 const appResponse = require('./app-response');
 const role = require('../services/master-role-services');
-const { request } = require('express');
+const {request} = require('express');
 
 const getRole = async (req, res) => {
     appResponse.build(res, await role.getRole(req.currentUser, req.body));
