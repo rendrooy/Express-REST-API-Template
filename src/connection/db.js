@@ -13,17 +13,17 @@ const pool = new Pool({
 });
 
 const sequelizeConnection = new Sequelize(
-    dbConection.database,
-    dbConection.user,
-    dbConection.password,
+    dbConnection.database,
+    dbConnection.user,
+    dbConnection.password,
     {
-        host: dbConection.host,
+        host: dbConnection.host,
         dialect: 'postgres',
-        timezone: '+07:00', // untuk PostgreSQL tetap pakai offset
-        port: 5432, // Port default PostgreSQL
+        port: dbConnection.port,
+        timezone: '+07:00',
         define: {
             timestamps: false,
-            schema: 'homehub_revamp', // <- pindahkan ke sini
+            schema: 'homehub_revamp', // ini schema default
         },
     }
 );

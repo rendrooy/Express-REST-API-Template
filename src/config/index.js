@@ -6,12 +6,12 @@ const timeConfig = {
     oracle: 'YYYY-MM-DD HH24:MI:SS',
 };
 
-const dbConection = {
+const dbConnection = {
     user: 'homehub',
     host: 'localhost',
-    database: 'homehubd',
+    database: 'homehub',
     password: 'homehub',
-    port: 5432, // Port default PostgreSQL
+    port: 5432,
 };
 
 const fileTypes = {
