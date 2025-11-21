@@ -21,6 +21,6 @@ const fileTypes = {
 
 module.exports = {
     timeConfig,
-    dbConection,
+    dbConnection,
     fileTypes,
 };

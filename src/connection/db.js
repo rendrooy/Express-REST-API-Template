@@ -1,14 +1,14 @@
 // connection/db.js
 const {Pool} = require('pg');
 const {Sequelize, Op} = require('sequelize');
-const {dbConection} = require('../config');
+const {dbConnection} = require('../config');
 const {operatorTypes} = require('./query-builder');
 
 const pool = new Pool({
-    user: dbConection.user,
-    host: dbConection.host,
-    database: dbConection.database,
-    password: dbConection.password,
+    user: dbConnection.user,
+    host: dbConnection.host,
+    database: dbConnection.database,
+    password: dbConnection.password,
     port: 5432, // Port default PostgreSQL
 });
 
