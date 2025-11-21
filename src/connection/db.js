@@ -17,13 +17,13 @@ const sequelizeConnection = new Sequelize(
     dbConection.user,
     dbConection.password,
     {
-        schema: 'homehub_revamp',
         host: dbConection.host,
         dialect: 'postgres',
         timezone: '+07:00', // untuk PostgreSQL tetap pakai offset
         port: 5432, // Port default PostgreSQL
         define: {
             timestamps: false,
+            schema: 'homehub_revamp', // <- pindahkan ke sini
         },
     }
 );
