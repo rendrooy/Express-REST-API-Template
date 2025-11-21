@@ -9,7 +9,7 @@ const timeConfig = {
 const dbConection = {
     user: 'hoomehub',
     host: 'localhost',
-    database: 'homehub',
+    database: 'homehubd',
     password: 'homehub',
     port: 5432, // Port default PostgreSQL
 };
