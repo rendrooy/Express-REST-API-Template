@@ -286,13 +286,14 @@ const uploadFile = async (req, callback) => {
                 process.cwd(),
                 "src",
                 "storages",
+                "news",
                 finalFileName
             );
 
             try {
                 // ensure folder exists
                 await fs.promises.mkdir(
-                    path.join(process.cwd(), "src", "storages"),
+                    path.join(process.cwd(), "src", "storages", "news"),
                     {recursive: true}
                 );
 
