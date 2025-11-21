@@ -17,12 +17,9 @@ const news = require('../controller/master-news-controller');
 const {upload} = require('../connection/multer-config');
 
 router.get('/', (req, res) => {
-    res.send({message: 'Hello world'});
+    res.send({message: 'HAIII'});
 });
 
-router.get('/', (req, res) => {
-    res.send({message: 'Hello world'});
-});
 
 // Auth
 router.post('/auth/login', auth.login);
