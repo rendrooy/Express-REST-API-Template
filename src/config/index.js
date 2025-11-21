@@ -7,7 +7,7 @@ const timeConfig = {
 };
 
 const dbConection = {
-    user: 'hoomehub',
+    user: 'homehub',
     host: 'localhost',
     database: 'homehubd',
     password: 'homehub',
